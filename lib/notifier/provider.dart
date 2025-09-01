@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:to_do_app/model/task_model.dart';
 
 class ThemeProvider with ChangeNotifier {
   bool _isDark = false;
@@ -10,17 +11,27 @@ class ThemeProvider with ChangeNotifier {
 }
 
 class TaskProvider with ChangeNotifier {
-  List _task = [];
-  final taskController = TextEditingController();
-  // bool? checked = false;
-  List get tasks => _task;
-  void addTask(titles) {
-    _task.insert(0, titles);
-    notifyListeners();
-  }
+ final List<Task> _task = [];
+List<Task> get tasks => _task;
+final taskController = TextEditingController();
 
-  void removeTask(index) {
-    _task.removeAt(index);
-    notifyListeners();
-  }
+void addTask(String title) {
+  _task.insert(0, Task(title));
+  notifyListeners();
+}
+
+void removeTask(int index) {
+  _task.removeAt(index);
+  notifyListeners();
+}
+
+void updateTask(int index, String newTitle) {
+  _task[index].title = newTitle;
+  notifyListeners();
+}
+
+void toggleStatus(int index) {
+  _task[index].isCompleted = !_task[index].isCompleted;
+  notifyListeners();
+}
 }

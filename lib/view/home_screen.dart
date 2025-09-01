@@ -10,6 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _addKey = GlobalKey<FormState>();
+  final _updateKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final task = context.watch<TaskProvider>();
@@ -38,8 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
-          // side: BorderSide(color: Colors.white, width: 3),
+          borderRadius: BorderRadius.circular(25),
         ),
         onPressed: () {
           showDialog(
@@ -55,12 +56,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                content: TextField(
-                  controller: task.taskController,
-                  decoration: InputDecoration(
-                    labelText: "Write task",
-                    prefixIcon: Icon(Icons.task),
-                    border: OutlineInputBorder(borderSide: BorderSide()),
+                content: Form(
+                  key: _addKey,
+                  child: TextFormField(
+                    controller: task.taskController,
+                    decoration: InputDecoration(
+                      labelText: "Write task",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Please enter a task";
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 actions: [
@@ -71,7 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.indigo,
-                          // side: BorderSide(color: Colors.black, width: 3),
                         ),
                         onPressed: () {
                           Navigator.pop(context);
@@ -84,10 +92,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.indigo,
-                          // side: BorderSide(color: Colors.black, width: 3),
                         ),
                         onPressed: () {
-                          if (task.taskController.text.trim().isNotEmpty) {
+                          if (_addKey.currentState!.validate()) {
                             context.read<TaskProvider>().addTask(
                               task.taskController.text,
                             );
@@ -104,16 +111,16 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           );
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.add), 
       ),
       body: SafeArea(
         child: Consumer<TaskProvider>(
-          builder: (context, taskProvider, child) {
+          builder: (context, taskProvider, child) {            
             if (taskProvider.tasks.isEmpty) {
               return Center(
                 child: Text(
                   "No Task",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               );
             }
@@ -134,21 +141,113 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: taskProvider.tasks.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Text(taskProvider.tasks[index]),
-                        // leading: Checkbox(
-                        //   activeColor: Colors.green,
-                        //   value: checked,
-                        //   onChanged: (val) {
-                        //     setState(() {
-                        //       checked = val;
-                        //     });
-                        //   },
-                        // ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            taskProvider.removeTask(index);
+                        title: Text(
+                          taskProvider.tasks[index].title,
+                          style: TextStyle(
+                            decoration: taskProvider.tasks[index].isCompleted
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                          ),
+                        ),
+                        leading: Checkbox(
+                          value: taskProvider.tasks[index].isCompleted,
+                          activeColor: Colors.green,
+                          onChanged: (value) {
+                            context.read<TaskProvider>().toggleStatus(index);
                           },
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () {
+                                final editController = TextEditingController(
+                                  text: taskProvider.tasks[index].title,
+                                );
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Center(
+                                        child: Text(
+                                          "Edit Task",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
+                                      ),
+                                      content: Form(
+                                        key: _updateKey,
+                                        child: TextFormField(
+                                          controller: editController,
+                                          decoration: InputDecoration(
+                                            labelText: "Update task",
+                                            // prefixIcon: Icon(Icons.task),
+                                            border: OutlineInputBorder(),
+                                          ),
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.trim().isEmpty) {
+                                              return "Please enter updated task";
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                      actions: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                foregroundColor: Colors.white,
+                                                backgroundColor: Colors.indigo,
+                                                // side: BorderSide(color: Colors.black, width: 3),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("Cancel"),
+                                            ),
+                                            SizedBox(width: 20),
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                foregroundColor: Colors.white,
+                                                backgroundColor: Colors.indigo,
+                                                // side: BorderSide(color: Colors.black, width: 3),
+                                              ),
+                                              onPressed: () {
+                                                if (_updateKey.currentState!
+                                                    .validate()) {
+                                                  context
+                                                      .read<TaskProvider>()
+                                                      .updateTask(
+                                                        index,
+                                                        editController.text,
+                                                      );
+                                                  Navigator.pop(context);
+                                                }
+                                              },
+                                              child: Text("Update"),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                taskProvider.removeTask(index);
+                              },
+                            ),
+                          ],
                         ),
                       );
                     },
