@@ -134,12 +134,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 //total task count shows here------------------------------------------------------------------------------------->
                 Padding(
                   padding: const EdgeInsets.all(20),
-                  child: Text(
-                    "Total Tasks: ${taskProvider.tasks.length}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Total: ${taskProvider.tasks.length}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      SizedBox(width: 20), // space between texts
+                      Text(
+                        "Completed: ${taskProvider.completedTaskCount}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Text(
+                        "Pending: ${taskProvider.pendingTaskCount}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 //tasks show here------------------------------------------------------------------------------------------------->

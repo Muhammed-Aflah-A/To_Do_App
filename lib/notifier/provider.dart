@@ -17,6 +17,9 @@ class TaskProvider with ChangeNotifier {
   final taskController = TextEditingController();
   final List<Task> _task = [];
   List<Task> get tasks => _task;
+  int get completedTaskCount => _task.where((t) => t.isCompleted).length;
+  int get pendingTaskCount => _task.where((t) => !t.isCompleted).length;
+
 
   //task adding here---------------------------------------------------------------------------------------------------------------->
   void addTask(String title) {
