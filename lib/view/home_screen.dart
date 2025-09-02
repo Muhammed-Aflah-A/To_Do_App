@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+//imported provider package
 import 'package:provider/provider.dart';
+//imported provider page
 import '../notifier/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  //keys of form widget------------------------------------------------------------------------------------------------------->
   final _addKey = GlobalKey<FormState>();
   final _updateKey = GlobalKey<FormState>();
   @override
@@ -28,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         foregroundColor: Colors.white,
         backgroundColor: Colors.indigo,
         actions: [
+          //theme button------------------------------------------------------------------------------------------------------>
           IconButton(
             onPressed: () {
               context.read<ThemeProvider>().toggleTheme();
@@ -36,12 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+      //task adding button---------------------------------------------------------------------------------------------------->
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
         onPressed: () {
           showDialog(
             context: context,
@@ -64,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       labelText: "Write task",
                       border: OutlineInputBorder(),
                     ),
+                    //form validate here ------------------------------------------------------------------------------------------>
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return "Please enter a task";
@@ -111,11 +115,12 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           );
         },
-        child: Icon(Icons.add), 
+        child: Icon(Icons.add),
       ),
+      //the body starts here ----------------------------------------------------------------------------------------------------->
       body: SafeArea(
         child: Consumer<TaskProvider>(
-          builder: (context, taskProvider, child) {            
+          builder: (context, taskProvider, child) {
             if (taskProvider.tasks.isEmpty) {
               return Center(
                 child: Text(
@@ -126,6 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
             return Column(
               children: [
+                //total task count shows here------------------------------------------------------------------------------------->
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: Text(
@@ -136,6 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+                //tasks show here------------------------------------------------------------------------------------------------->
                 Expanded(
                   child: ListView.builder(
                     itemCount: taskProvider.tasks.length,
@@ -149,6 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : TextDecoration.none,
                           ),
                         ),
+                        //status of task shows here-------------------------------------------------------------------------------->
                         leading: Checkbox(
                           value: taskProvider.tasks[index].isCompleted,
                           activeColor: Colors.green,
@@ -159,6 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            //edit button is here----------------------------------------------------------------------------------->
                             IconButton(
                               icon: Icon(Icons.edit, color: Colors.blue),
                               onPressed: () {
@@ -184,7 +193,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           controller: editController,
                                           decoration: InputDecoration(
                                             labelText: "Update task",
-                                            // prefixIcon: Icon(Icons.task),
                                             border: OutlineInputBorder(),
                                           ),
                                           validator: (value) {
@@ -205,7 +213,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                               style: ElevatedButton.styleFrom(
                                                 foregroundColor: Colors.white,
                                                 backgroundColor: Colors.indigo,
-                                                // side: BorderSide(color: Colors.black, width: 3),
                                               ),
                                               onPressed: () {
                                                 Navigator.pop(context);
@@ -217,7 +224,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                               style: ElevatedButton.styleFrom(
                                                 foregroundColor: Colors.white,
                                                 backgroundColor: Colors.indigo,
-                                                // side: BorderSide(color: Colors.black, width: 3),
                                               ),
                                               onPressed: () {
                                                 if (_updateKey.currentState!
@@ -241,6 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               },
                             ),
+                            //delete button goes here--------------------------------------------------------------------------------->
                             IconButton(
                               icon: Icon(Icons.delete, color: Colors.red),
                               onPressed: () {

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+//imported home screen
 import 'package:to_do_app/view/home_screen.dart';
+//imported provider package
 import 'package:provider/provider.dart';
+//imported provider page
 import 'notifier/provider.dart';
 
 void main() {
   runApp(
+    //multiple provider goes here------------------------------------------------------------------------------------------------>
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
@@ -28,6 +32,7 @@ class _MyAppState extends State<MyApp> {
     final theme = context.watch<ThemeProvider>();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      //app theme goes here------------------------------------------------------------------------------------------------------->
       theme: theme.isDark ? ThemeData.dark() : ThemeData.light(),
       title: "To Do Application",
       home: HomeScreen(),
